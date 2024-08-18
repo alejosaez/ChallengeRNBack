@@ -15,16 +15,8 @@ const Combination = conn.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    additionalPrice: {
+    additional_price: {
       type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    product_id: {
-      type: DataTypes.UUID,
-      references: {
-        model: Product,
-        key: 'product_id',
-      },
       allowNull: false,
     },
   },
