@@ -17,7 +17,7 @@ Size.belongsToMany(Product, { through: ProductSize, foreignKey: 'size_id' });
 
 (async () => {
   try {
-    await conn.sync({ force: true });
+    await conn.sync({ force: false });
     console.log('Database synchronized');
 
     const PORT = process.env.PORT || 3001;
