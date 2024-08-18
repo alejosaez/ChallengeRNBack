@@ -1,13 +1,31 @@
-import { Sequelize } from "sequelize";
+import 'dotenv/config'
+import { Sequelize } from 'sequelize'
 
-const sequelize= new Sequelize({
-    database: process.env.DB_NAME,
-    dialect:"mysql",
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    models: [__dirname + "/models"]
-})
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, SSL, DATABASE_URL } =
+  process.env
 
-export default sequelize
+//with heroku
+// const sequelize = new Sequelize(DATABASE_URL, {
+//   logging: false,
+//   native: false,
+//   dialectOptions: {
+//     ssl: {
+//       require: false,
+//       rejectUnauthorized: false,
+//     },
+//   },
+// })
+
+export const conn = new Sequelize(
+  `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}${
+    SSL ? '?ssl=true' : ''
+  }`,
+  {
+    logging: false,
+    native: false,
+    dialectOptions: {
+      ssl: SSL ? true : false,
+    },
+    dialect: 'postgres',
+  },
+)
