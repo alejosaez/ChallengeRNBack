@@ -1,28 +1,30 @@
-import dotenv from 'dotenv';
+import { conn } from './src/database/connection';
+import User from './src/models/user';
+import Product from './src/models/product';
+import Category from './src/models/category';
+import Size from './src/models/size';
+import ProductSize from './src/models/productSize';
 import app from './src/app';
-import { sequelize } from './src/db';
-import "./src/models/"
-dotenv.config();
 
-const SERVER_PORT = process.env.PORT || 3001;
+// User.hasMany(Product, { foreignKey: 'user_id' });
+// Product.belongsTo(User, { foreignKey: 'user_id' });
+Product.belongsTo(Category, { foreignKey: 'category_id' });
+Category.hasMany(Product, { foreignKey: 'category_id' });
+
+Product.belongsToMany(Size, { through: ProductSize, foreignKey: 'product_id' });
+Size.belongsToMany(Product, { through: ProductSize, foreignKey: 'size_id' });
+
 
 (async () => {
   try {
-    await sequelize.authenticate();
-    console.log('Database connected!');
+    await conn.sync({ force: true });
+    console.log('Database synchronized');
 
-    await sequelize.sync({ force: true }); // Cambia a { alter: true } en producción
-    console.log('Database synchronized!');
-
-    app.listen(SERVER_PORT, () => {
-      console.log(`Server is running on port ${SERVER_PORT}`);
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error('Unable to connect to the database or start the server:', error.message);
-      console.error(error.stack);
-    } else {
-      console.error('Unexpected error', error);
-    }
+    console.error('Unable to connect to the database or start the server:', error);
   }
 })();
