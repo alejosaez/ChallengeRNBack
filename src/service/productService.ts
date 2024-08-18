@@ -1,7 +1,7 @@
 import Product from '../models/product';
 import ProductSize from '../models/productSize';
 import ProductCombination from '../models/productCombination';
-import { CreateProductData, ProductCreationAttributes } from '../types/productType';
+import { CreateProductData, ProductCreationAttributes, UpdateProductData } from '../types/productType';
 import Size from '../models/size';
 import Combination from '../models/combination';
 
@@ -31,34 +31,68 @@ export async function getAllProducts() {
     include: [
       {
         model: Size,
-        through: { attributes: [] },  // Excluir atributos de la tabla intermedia ProductSize
+        through: { attributes: [] }, 
         attributes: ['size_id', 'name', 'additional_price']
       },
       {
         model: Combination,
-        through: { attributes: [] },  // Excluir atributos de la tabla intermedia ProductCombination
+        through: { attributes: [] },  
         attributes: ['combination_id', 'name', 'additional_price']
       }
     ]
   });
 }
 
-export async function getProductById(productId: string) {
-  return await Product.findByPk(productId);
+export async function getProductById(product_id: string) {
+  return await Product.findByPk(product_id, {
+    include: [
+      { model: Size, through: { attributes: [] } },
+      { model: Combination, through: { attributes: [] } }
+    ]
+  });
 }
 
-export async function updateProduct(productId: string, data: Partial<CreateProductData>) {
+export async function updateProduct(product_id: string, data: Partial<UpdateProductData>) {
   const { sizes, combinations, ...productData } = data;
 
+  // Actualizamos los campos básicos del producto
   const [updated] = await Product.update(productData as Partial<ProductCreationAttributes>, {
-    where: { product_id: productId },
+    where: { product_id },
   });
 
-  // Aquí podrías actualizar `sizes` y `combinations` si fuera necesario
+  if (!updated) {
+    return null;
+  }
 
-  return updated ? await Product.findByPk(productId) : null;
+  // Actualizamos las relaciones con tamaños (sizes)
+  if (sizes && sizes.length > 0) {
+    // Primero eliminamos las relaciones actuales
+    await ProductSize.destroy({ where: { product_id } });
+    // Luego creamos las nuevas relaciones
+    for (const sizeId of sizes) {
+      await ProductSize.create({ product_id, size_id: sizeId });
+    }
+  }
+
+  // Actualizamos las relaciones con combinaciones (combinations)
+  if (combinations && combinations.length > 0) {
+    // Primero eliminamos las relaciones actuales
+    await ProductCombination.destroy({ where: { product_id } });
+    // Luego creamos las nuevas relaciones
+    for (const combinationId of combinations) {
+      await ProductCombination.create({ product_id, combination_id: combinationId });
+    }
+  }
+
+  // Devolvemos el producto actualizado con las relaciones incluidas
+  return await Product.findByPk(product_id, {
+    include: [
+      { model: Size, through: { attributes: [] } },
+      { model: Combination, through: { attributes: [] } }
+    ]
+  });
 }
 
-export async function deleteProduct(productId: string) {
-  return await Product.destroy({ where: { product_id: productId } });
+export async function deleteProduct(product_id: string) {
+  return await Product.destroy({ where: { product_id: product_id } });
 }
