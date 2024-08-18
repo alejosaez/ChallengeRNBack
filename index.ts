@@ -1,19 +1,11 @@
 import { conn } from './src/database/connection';
-import User from './src/models/user';
-import Product from './src/models/product';
-import Category from './src/models/category';
-import Size from './src/models/size';
-import ProductSize from './src/models/productSize';
 import app from './src/app';
+import { setupAssociations } from './src/models';
 
 // User.hasMany(Product, { foreignKey: 'user_id' });
 // Product.belongsTo(User, { foreignKey: 'user_id' });
-Product.belongsTo(Category, { foreignKey: 'category_id' });
-Category.hasMany(Product, { foreignKey: 'category_id' });
 
-Product.belongsToMany(Size, { through: ProductSize, foreignKey: 'product_id' });
-Size.belongsToMany(Product, { through: ProductSize, foreignKey: 'size_id' });
-
+setupAssociations();
 
 (async () => {
   try {
