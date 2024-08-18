@@ -1,36 +1,21 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../db';
+import { conn } from '../database/connection';
+import { DataTypes } from 'sequelize';
+import Category from './category';
 
-class Product extends Model {
-  public id!: number;
-  public name!: string;
-  public price!: number;
-  public categoryId!: number;
-  public unitPrice!: number;
-  public description!: string;
-  public imageUrl!: string;
-}
-
-Product.init(
+const Product = conn.define(
+  'Product',
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+    product_id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      allowNull: false,
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    unitPrice: {
+    unit_price: {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
@@ -38,17 +23,19 @@ Product.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    imageUrl: {
+    image_url: {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    category_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: Category,
+        key: 'category_id',
+      },
+    },
   },
-  {
-    sequelize,
-    modelName: 'Product',
-    tableName: 'products',
-    timestamps: true,
-  }
+  { timestamps: false, tableName: 'Product' },
 );
 
 export default Product;
