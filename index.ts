@@ -2,9 +2,6 @@ import { conn } from './src/database/connection';
 import app from './src/app';
 import { setupAssociations } from './src/models';
 
-// User.hasMany(Product, { foreignKey: 'user_id' });
-// Product.belongsTo(User, { foreignKey: 'user_id' });
-
 setupAssociations();
 
 (async () => {

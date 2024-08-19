@@ -4,10 +4,8 @@ import { combinationSchema } from '../schemas/combinationSchema';
 
 export const createCombinationController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Validamos la entrada usando Zod
     const { name, additional_price } = combinationSchema.parse(req.body);
     
-    // Creamos la combinación
     const combination = await createCombination(name, additional_price);
     return res.status(201).json(combination);
   } catch (error) {

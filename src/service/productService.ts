@@ -55,7 +55,6 @@ export async function getProductById(product_id: string) {
 export async function updateProduct(product_id: string, data: Partial<UpdateProductData>) {
   const { sizes, combinations, ...productData } = data;
 
-  // Actualizamos los campos básicos del producto
   const [updated] = await Product.update(productData as Partial<ProductCreationAttributes>, {
     where: { product_id },
   });
@@ -64,27 +63,20 @@ export async function updateProduct(product_id: string, data: Partial<UpdateProd
     return null;
   }
 
-  // Actualizamos las relaciones con tamaños (sizes)
   if (sizes && sizes.length > 0) {
-    // Primero eliminamos las relaciones actuales
     await ProductSize.destroy({ where: { product_id } });
-    // Luego creamos las nuevas relaciones
     for (const sizeId of sizes) {
       await ProductSize.create({ product_id, size_id: sizeId });
     }
   }
 
-  // Actualizamos las relaciones con combinaciones (combinations)
   if (combinations && combinations.length > 0) {
-    // Primero eliminamos las relaciones actuales
     await ProductCombination.destroy({ where: { product_id } });
-    // Luego creamos las nuevas relaciones
     for (const combinationId of combinations) {
       await ProductCombination.create({ product_id, combination_id: combinationId });
     }
   }
 
-  // Devolvemos el producto actualizado con las relaciones incluidas
   return await Product.findByPk(product_id, {
     include: [
       { model: Size, through: { attributes: [] } },

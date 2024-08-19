@@ -7,7 +7,6 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
   try {
     const validation = productSchema.parse(req.body);
 
-    // Asegurar que sizes y combinations siempre están presentes
     const productData: CreateProductData = {
       ...validation,
       sizes: validation.sizes || [],
