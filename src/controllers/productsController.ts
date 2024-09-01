@@ -22,7 +22,11 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const products = await productService.getAllProducts();
+    const { search } = req.query as { search?: string };
+
+    // Llamar al servicio de productos con el término de búsqueda (si está presente)
+    console.log("search: ", search)
+    const products = await productService.getAllProducts(search);
     res.status(200).json(products);
   } catch (error) {
     next(error);
