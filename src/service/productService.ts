@@ -55,6 +55,7 @@ export async function getProductById(product_id: string) {
 export async function updateProduct(product_id: string, data: Partial<UpdateProductData>) {
   const { sizes, combinations, ...productData } = data;
 
+  // Actualizar los atributos del producto
   const [updated] = await Product.update(productData as Partial<ProductCreationAttributes>, {
     where: { product_id },
   });
@@ -63,13 +64,15 @@ export async function updateProduct(product_id: string, data: Partial<UpdateProd
     return null;
   }
 
+  // Actualizar los tamaños asociados
   if (sizes && sizes.length > 0) {
-    await ProductSize.destroy({ where: { product_id } });
+    await ProductSize.destroy({ where: { product_id } }); // Elimina los tamaños existentes
     for (const sizeId of sizes) {
-      await ProductSize.create({ product_id, size_id: sizeId });
+      await ProductSize.create({ product_id, size_id: sizeId }); // Crea nuevas asociaciones de tamaños
     }
   }
 
+  // Actualizar las combinaciones asociadas
   if (combinations && combinations.length > 0) {
     await ProductCombination.destroy({ where: { product_id } });
     for (const combinationId of combinations) {
@@ -77,6 +80,7 @@ export async function updateProduct(product_id: string, data: Partial<UpdateProd
     }
   }
 
+  // Retornar el producto actualizado
   return await Product.findByPk(product_id, {
     include: [
       { model: Size, through: { attributes: [] } },
@@ -84,6 +88,7 @@ export async function updateProduct(product_id: string, data: Partial<UpdateProd
     ]
   });
 }
+
 
 export async function deleteProduct(product_id: string) {
   return await Product.destroy({ where: { product_id: product_id } });
