@@ -40,19 +40,18 @@ export async function createProduct(data: CreateProductData) {
 }
 
 export async function getAllProducts(search?: string) {
-  // Construir la cláusula WHERE para la búsqueda parcial por nombre de producto y categoría
   const whereClause = search
     ? {
         [Op.or]: [
-          { name: { [Op.iLike]: `%${search}%` } }, // Búsqueda parcial insensible a mayúsculas para nombre de producto
-          { "$Category.name$": { [Op.iLike]: `%${search}%` } }, // Búsqueda parcial insensible a mayúsculas para nombre de categoría
+          { name: { [Op.iLike]: `%${search}%` } }, 
+          { "$Category.name$": { [Op.iLike]: `%${search}%` } },
         ],
       }
     : {};
 
-  // Realizar la consulta a la base de datos con o sin filtro
+  
   return await Product.findAll({
-    where: whereClause, // Aplicar la cláusula WHERE si hay un término de búsqueda
+    where: whereClause, 
     include: [
       {
         model: Size,
@@ -87,7 +86,6 @@ export async function updateProduct(
 ) {
   const { sizes, combinations, ...productData } = data;
 
-  // Actualizar los atributos del producto
   const [updated] = await Product.update(
     productData as Partial<ProductCreationAttributes>,
     {
@@ -99,15 +97,15 @@ export async function updateProduct(
     return null;
   }
 
-  // Actualizar los tamaños asociados
+
   if (sizes && sizes.length > 0) {
-    await ProductSize.destroy({ where: { product_id } }); // Elimina los tamaños existentes
+    await ProductSize.destroy({ where: { product_id } }); 
     for (const sizeId of sizes) {
-      await ProductSize.create({ product_id, size_id: sizeId }); // Crea nuevas asociaciones de tamaños
+      await ProductSize.create({ product_id, size_id: sizeId }); 
     }
   }
 
-  // Actualizar las combinaciones asociadas
+
   if (combinations && combinations.length > 0) {
     await ProductCombination.destroy({ where: { product_id } });
     for (const combinationId of combinations) {
@@ -118,7 +116,7 @@ export async function updateProduct(
     }
   }
 
-  // Retornar el producto actualizado
+
   return await Product.findByPk(product_id, {
     include: [
       { model: Size, through: { attributes: [] } },

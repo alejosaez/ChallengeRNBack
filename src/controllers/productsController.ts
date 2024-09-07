@@ -24,7 +24,7 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
   try {
     const { search } = req.query as { search?: string };
 
-    // Llamar al servicio de productos con el término de búsqueda (si está presente)
+   
     console.log("search: ", search)
     const products = await productService.getAllProducts(search);
     res.status(200).json(products);
