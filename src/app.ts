@@ -13,11 +13,10 @@ const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
 
-// Configuración de CORS para aceptar peticiones de cualquier origen
 app.use(cors({
-  origin: '*',  // Permite todos los orígenes
+  origin: '*', 
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: false,  // Desactiva el envío de cookies con la solicitud
+  credentials: false,  
 }));
 
 app.use("/api", userRouter);

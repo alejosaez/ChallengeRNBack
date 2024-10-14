@@ -39,37 +39,52 @@ export async function createProduct(data: CreateProductData) {
   return product;
 }
 
-export async function getAllProducts(search?: string) {
+export async function getAllProductsService(search?: string) {
   const whereClause = search
     ? {
         [Op.or]: [
           { name: { [Op.iLike]: `%${search}%` } }, 
-          { "$Category.name$": { [Op.iLike]: `%${search}%` } },
+          { "$Category.name$": { [Op.iLike]: `%${search}%` } }, // Usando el alias 'Category'
         ],
       }
-    : {};
+    : {}; 
 
-  
-  return await Product.findAll({
-    where: whereClause, 
-    include: [
-      {
-        model: Size,
-        through: { attributes: [] },
-        attributes: ["size_id", "name", "additional_price"],
-      },
-      {
-        model: Combination,
-        through: { attributes: [] },
-        attributes: ["combination_id", "name", "additional_price"],
-      },
-      {
-        model: Category,
-        attributes: ["category_id", "name"],
-      },
-    ],
-  });
+  console.log("Constructed where clause:", whereClause);
+
+  try {
+    const products = await Product.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Size,
+          as: 'Sizes', // Usa el alias definido en la relación
+          through: { attributes: [] },
+          attributes: ["size_id", "name", "additional_price"],
+        },
+        {
+          model: Combination,
+          as: 'Combinations', // Usa el alias definido en la relación
+          through: { attributes: [] },
+          attributes: ["combination_id", "name", "additional_price"],
+        },
+        {
+          model: Category,
+          as: 'Category', // Usa el alias definido en la relación
+          attributes: ["category_id", "name"],
+        },
+      ],
+    });
+
+    console.log("Products fetched from database:", JSON.stringify(products, null, 2));
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching products from database:", error);
+    throw error;
+  }
 }
+
+
 
 export async function getProductById(product_id: string) {
   return await Product.findByPk(product_id, {

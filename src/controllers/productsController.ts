@@ -26,7 +26,7 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
 
    
     console.log("search: ", search)
-    const products = await productService.getAllProducts(search);
+    const products = await productService.getAllProductsService(search);
     res.status(200).json(products);
   } catch (error) {
     next(error);
