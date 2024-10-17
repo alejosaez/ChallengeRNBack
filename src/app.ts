@@ -19,7 +19,7 @@ app.use(cors({
   credentials: false,  
 }));
 
-app.use("/api", userRouter);
+//app.use("/api", userRouter);
 app.use("/api", productRouter);
 app.use("/api", categoryRouter);
 app.use("/api", sizesRouter);
