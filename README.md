@@ -94,3 +94,24 @@ PORT=3001
 
 
 El servidor se ejecutará en http://localhost:3000 por defecto.
+
+
+
+Librerías Utilizadas
+
+	•	Express: Framework para construir la API de forma rápida y eficiente.
+	•	Sequelize: ORM para interactuar con PostgreSQL.
+	•	Zod: Validación de datos en tiempo real.
+	•	JWT: Autenticación de usuarios.
+	•	Swagger: Documentación de la API.
+	•	Jest: Framework de pruebas para asegurar la funcionalidad.
+	•	Auth0: Manejo de autenticación y autorización de usuarios.
+
+Recursos y Referencias
+
+	•	Sequelize
+	•	Zod
+	•	Swagger
+	•	Auth0
+	•	PostgreSQL
+	•	Jest
