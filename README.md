@@ -1,107 +1,96 @@
 # ChallengeRNBack
 
-Este desafío consiste en crear una aplicación móvil con **React Native** y **TypeScript**, incluyendo el desarrollo de una **API de backend** para la gestión de datos. La aplicación debe seguir el diseño proporcionado y cumplir con varios requisitos funcionales y de autenticación.
+Este proyecto corresponde al backend para el desafío de crear una aplicación móvil que cumpla con un diseño **pixel-perfect** y que integre gestión de datos mediante una **API RESTful** construida en **Node.js** y **Express**. Este backend permite la autenticación de usuarios, manejo de productos y categorías, y persistencia de datos en **PostgreSQL**.
 
-[Figma](https://www.figma.com/design/wyEuQ8vu7rkx4kIfm5h9Zn/Coffee-Mobile-App-UI-Template-(Community)?node-id=0-1&t=fFryQwtdgeBl0kwf-0)
+## Descripción del Backend
 
-## Backend (API con Node.js y Express)
+El backend gestiona toda la lógica de negocio de la aplicación móvil, incluyendo la creación, consulta, actualización y eliminación (CRUD) de productos y categorías. Este sistema se ha desarrollado en **TypeScript** y **Express**, y usa **Sequelize** para manejar la base de datos en **PostgreSQL**.
 
-### Requisitos y Funcionalidad
+- [Diseño en Figma](https://www.figma.com/design/wyEuQ8vu7rkx4kIfm5h9Zn/Coffee-Mobile-App-UI-Template-(Community)?node-id=0-1&t=fFryQwtdgeBl0kwf-0)
 
-1. **Configuración Inicial**
-   - Configuración del backend en **TypeScript** y **Express**.
-   - Utilización de **Sequelize** para gestionar una base de datos en **PostgreSQL**.
+## Estructura del Proyecto y Funcionalidad
 
-2. **Autenticación** (Pendiente de implementación)
-   - Autenticación de usuario con **Auth0** y protección de rutas mediante middleware.
+### Configuración Inicial
 
-3. **Rutas**
-   - `POST /api/products`: Crear un nuevo producto.
-   - `GET /api/products`: Obtener todos los productos.
-   - `GET /api/products/:id`: Obtener un producto por ID específico.
-   - `PUT /api/products/:id`: Actualizar un producto.
-   - `DELETE /api/products/:id`: Eliminar un producto.
-   - `GET /api/categories`: Obtener todas las categorías.
-   - `GET /api/categories/:id/products`: Obtener productos de una categoría específica.
+- El backend está configurado en **TypeScript** para mejorar la seguridad en tiempo de compilación y reducir errores.
+- Utilizamos **Sequelize** como ORM para interactuar con **PostgreSQL**.
+- Toda la configuración está organizada en módulos y controladores, siguiendo las buenas prácticas de arquitectura en **Node.js**.
 
-4. **Validación y Manejo de Errores**
-   - Validación de datos de entrada con **Zod**.
-   - Manejo global de errores.
+### Relación entre las Tablas
 
-5. **Documentación de la API** (Pendiente)
-   - Documentación de la API utilizando **Swagger**.
+El modelo de datos tiene la siguiente estructura:
 
-6. **Pruebas**
-   - Implementación de pruebas unitarias para la creación de productos, asegurando que los productos se crean correctamente y la respuesta incluye los datos esperados.
+1. **Usuarios**: Contiene la información de los usuarios registrados y autenticados en la aplicación.
+2. **Productos**: Almacena los detalles de cada producto, como nombre, precio, descripción, categoría, entre otros.
+3. **Categorías**: Agrupa los productos y permite la organización en secciones. Cada categoría tiene una relación uno a muchos con los productos.
 
-## Frontend (Aplicación React Native)
+Las relaciones se establecen con **Sequelize** para permitir asociaciones entre las tablas y consultas conjuntas (eager loading).
 
-1. **Configuración Inicial**
-   - Proyecto de **React Native** con **TypeScript** y **Styled Components**.
-   - Configuración de **ESLint** y **Prettier**.
+### Rutas y Endpoints
 
-2. **Autenticación**
-   - Autenticación de usuario en el frontend utilizando **Auth0** y **Redux Toolkit** para el estado global.
+Las rutas principales del backend son:
 
-3. **Gestión de Productos**
-   - Consumo de la API con **Axios** y manejo de estado mediante **Redux Toolkit**.
-   - Creación, edición, eliminación y visualización de productos.
+- **Productos**:
+  - `POST /api/products`: Crea un nuevo producto.
+  - `GET /api/products`: Recupera todos los productos.
+  - `GET /api/products/:id`: Recupera un producto específico por su ID.
+  - `PUT /api/products/:id`: Actualiza un producto existente.
+  - `DELETE /api/products/:id`: Elimina un producto.
 
-4. **UI/UX**
-   - Implementación del diseño en React Native, siguiendo el estilo proporcionado y la funcionalidad de filtrado por categorías.
+- **Categorías**:
+  - `GET /api/categories`: Obtiene todas las categorías.
+  - `GET /api/categories/:id/products`: Recupera todos los productos asociados a una categoría específica.
 
-5. **Persistencia de Estado**
-   - Persistencia de estado con **Redux Persist** y almacenamiento local con **AsyncStorage**.
+- **Usuarios** (Autenticación):
+  - `POST /api/auth/register`: Registra un nuevo usuario.
+  - `POST /api/auth/login`: Autentica a un usuario.
+  - `GET /api/auth/logout`: Cierra la sesión de usuario.
 
-6. **Pruebas**
-   - Pruebas unitarias para el formulario de creación de productos, verificando la renderización y los campos requeridos.
+## Middleware
 
-## Requisitos Adicionales
+Para mejorar la seguridad y el manejo de datos, se implementaron los siguientes middlewares:
 
-1. **Pruebas**:
-   - Pruebas unitarias para el backend y el frontend.
-   
-2. **Despliegue**:
-   - Instrucciones de despliegue para el entorno de producción.
+1. **Autenticación**: Protege rutas sensibles utilizando JWT (JSON Web Tokens) para asegurar que solo usuarios autenticados puedan acceder a recursos específicos.
+2. **Validación**: Se utiliza **Zod** para validar los datos de entrada en cada solicitud, asegurando que cumplan con los requisitos esperados antes de procesarlos.
+3. **Manejo de Errores**: Middleware de manejo de errores global para capturar excepciones y enviar respuestas de error unificadas, mejorando la experiencia de desarrollo y la depuración.
 
-3. **Documentación**:
-   - Documentación clara sobre el proceso de configuración y despliegue.
+## Pruebas
 
-## Criterios de Evaluación
+Se implementaron pruebas unitarias y de integración para asegurar la fiabilidad de los endpoints y la lógica de negocio:
 
-1. **Funcionalidad**: Cumplimiento de todos los requisitos.
-2. **Calidad del Código**: Código limpio y organizado.
-3. **Autenticación y Seguridad**: Implementación de autenticación y protección de rutas.
-4. **Pruebas**: Inclusión de pruebas unitarias críticas.
-5. **Documentación**: Documentación clara y completa.
-6. **Despliegue**: Disponibilidad de la aplicación en línea.
+1. **Pruebas de Endpoints**: Cada endpoint cuenta con pruebas para verificar que responda correctamente en diferentes escenarios (éxito, error, autenticación fallida).
+2. **Pruebas de Validación**: Se prueba que las validaciones implementadas con **Zod** funcionen correctamente y respondan con mensajes adecuados cuando los datos de entrada son inválidos.
+3. **Mocking de Base de Datos**: Para evitar realizar operaciones reales en la base de datos durante las pruebas, se utilizan mocks de Sequelize.
 
-## Librerías Utilizadas
+Las pruebas se ejecutan usando **Jest**, proporcionando reportes claros y detallados de la cobertura de código.
 
-- TypeScript
-- Express
-- Sequelize
-- PostgreSQL
-- Auth0
-- Zod
-- Swagger
-- React Native
-- Styled Components
-- ESLint y Prettier
-- Redux Toolkit
-- Axios
-- React Query
-- React Hook Form
-- Redux Persist
-- AsyncStorage
+## Buenas Prácticas
 
-## Recursos y Referencias Adicionales
+En el desarrollo de este backend, se han seguido las siguientes buenas prácticas:
 
-- [Instalaciones](https://www.notion.so/Instalaciones-8b92d3212c274fcea311857eddf78729?pvs=21)
-- [Middlewares](https://www.notion.so/Middlewares-7a15aab5f068459ea1b75b81c03ed514?pvs=21)
-- [Validación de Rutas con Zod en Express](https://www.notion.so/Validaci-n-de-Rutas-con-Zod-en-Express-3a9bdcf710ed43baa022a4b749385846?pvs=21)
-- [Backend rutas y relaciones](https://www.notion.so/Backend-rutas-y-relaciones-ef9b89d83400472f93d48f32e4a511ef?pvs=21)
-- [Auth0](https://www.notion.so/AUTH0-109b0453285a46bfb2eb4098065c2f06?pvs=21)
-- [Publicación de Auth0](https://www.notion.so/publicacion-de-auth0-10964b694833805190e9efc3f926cb38?pvs=21)
-- [Testing con Jest](https://www.notion.so/Testing-con-Jest-10e64b694833808ca6c2c7b0181da0e5?pvs=21)
+- **Código Limpio y Modular**: Separación de responsabilidades en controladores y servicios, permitiendo un código más mantenible y fácil de escalar.
+- **Uso de TypeScript**: Tipado estático que reduce los errores y mejora la mantenibilidad.
+- **Principios DRY (Don't Repeat Yourself)**: Estandarización de funciones y lógica para evitar duplicación de código.
+- **Documentación**: Comentarios y documentación en puntos clave del código para facilitar el entendimiento y la colaboración.
+  
+## Configuración y Ejecución del Proyecto
 
+Para levantar el backend en un entorno de desarrollo, sigue estos pasos:
+
+### Paso 1: Clonar el Repositorio
+
+```bash
+git clone https://github.com/tuusuario/ChallengeRNBack.git
+cd ChallengeRNBack
+
+
+DB_USER=##
+DB_PASSWORD=***
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=challengeRN
+PORT=3001
+
+
+
+El servidor se ejecutará en http://localhost:3000 por defecto.
